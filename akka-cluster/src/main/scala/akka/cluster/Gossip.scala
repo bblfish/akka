@@ -84,7 +84,7 @@ private[cluster] final case class Gossip(
   }
 
   @transient private lazy val membersMap: Map[UniqueAddress, Member] =
-    members.map(m ⇒ m.uniqueAddress -> m)(collection.breakOut)
+    members.map(m ⇒ m.uniqueAddress → m)(collection.breakOut)
 
   /**
    * Increments the version for this 'Node'.
@@ -142,7 +142,8 @@ private[cluster] final case class Gossip(
     val mergedMembers = Gossip.emptyMembers union Member.pickHighestPriority(this.members, that.members)
 
     // 3. merge reachability table by picking records with highest version
-    val mergedReachability = this.overview.reachability.merge(mergedMembers.map(_.uniqueAddress),
+    val mergedReachability = this.overview.reachability.merge(
+      mergedMembers.map(_.uniqueAddress),
       that.overview.reachability)
 
     // 4. Nobody can have seen this new gossip yet
@@ -200,7 +201,8 @@ private[cluster] final case class Gossip(
   def isSingletonCluster: Boolean = members.size == 1
 
   def member(node: UniqueAddress): Member = {
-    membersMap.getOrElse(node,
+    membersMap.getOrElse(
+      node,
       Member.removed(node)) // placeholder for removed member
   }
 

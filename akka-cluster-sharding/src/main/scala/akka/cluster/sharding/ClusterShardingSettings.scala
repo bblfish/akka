@@ -110,7 +110,8 @@ final class ClusterShardingSettings(
   val tuningParameters: ClusterShardingSettings.TuningParameters,
   val coordinatorSingletonSettings: ClusterSingletonManagerSettings) extends NoSerializationVerificationNeeded {
 
-  require(stateStoreMode == "persistence" || stateStoreMode == "ddata",
+  require(
+    stateStoreMode == "persistence" || stateStoreMode == "ddata",
     s"Unknown 'state-store-mode' [$stateStoreMode], valid values are 'persistence' or 'ddata'")
 
   def withRole(role: String): ClusterShardingSettings = copy(role = ClusterShardingSettings.roleOption(role))
@@ -136,13 +137,14 @@ final class ClusterShardingSettings(
   def withCoordinatorSingletonSettings(coordinatorSingletonSettings: ClusterSingletonManagerSettings): ClusterShardingSettings =
     copy(coordinatorSingletonSettings = coordinatorSingletonSettings)
 
-  private def copy(role: Option[String] = role,
-                   rememberEntities: Boolean = rememberEntities,
-                   journalPluginId: String = journalPluginId,
-                   snapshotPluginId: String = snapshotPluginId,
-                   stateStoreMode: String = stateStoreMode,
-                   tuningParameters: ClusterShardingSettings.TuningParameters = tuningParameters,
-                   coordinatorSingletonSettings: ClusterSingletonManagerSettings = coordinatorSingletonSettings): ClusterShardingSettings =
+  private def copy(
+    role: Option[String] = role,
+    rememberEntities: Boolean = rememberEntities,
+    journalPluginId: String = journalPluginId,
+    snapshotPluginId: String = snapshotPluginId,
+    stateStoreMode: String = stateStoreMode,
+    tuningParameters: ClusterShardingSettings.TuningParameters = tuningParameters,
+    coordinatorSingletonSettings: ClusterSingletonManagerSettings = coordinatorSingletonSettings): ClusterShardingSettings =
     new ClusterShardingSettings(
       role,
       rememberEntities,

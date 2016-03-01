@@ -134,14 +134,16 @@ object HttpMessage {
 /**
  * The immutable model HTTP request model.
  */
-final case class HttpRequest(method: HttpMethod = HttpMethods.GET,
-                             uri: Uri = Uri./,
-                             headers: immutable.Seq[HttpHeader] = Nil,
-                             entity: RequestEntity = HttpEntity.Empty,
-                             protocol: HttpProtocol = HttpProtocols.`HTTP/1.1`) extends jm.HttpRequest with HttpMessage {
+final case class HttpRequest(
+  method: HttpMethod = HttpMethods.GET,
+  uri: Uri = Uri./,
+  headers: immutable.Seq[HttpHeader] = Nil,
+  entity: RequestEntity = HttpEntity.Empty,
+  protocol: HttpProtocol = HttpProtocols.`HTTP/1.1`) extends jm.HttpRequest with HttpMessage {
   HttpRequest.verifyUri(uri)
   require(entity.isKnownEmpty || method.isEntityAccepted, s"Requests with method '${method.value}' must have an empty entity")
-  require(protocol != HttpProtocols.`HTTP/1.0` || !entity.isInstanceOf[HttpEntity.Chunked],
+  require(
+    protocol != HttpProtocols.`HTTP/1.0` || !entity.isInstanceOf[HttpEntity.Chunked],
     "HTTP/1.0 requests must not have a chunked entity")
 
   type Self = HttpRequest
@@ -220,7 +222,8 @@ object HttpRequest {
     } else // http://tools.ietf.org/html/rfc7230#section-5.4
     if (hostHeader.isEmpty || uri.authority.isEmpty && hostHeader.get.isEmpty ||
       hostHeader.get.host.equalsIgnoreCase(uri.authority.host) && hostHeader.get.port == uri.authority.port) uri
-    else throw IllegalUriException(s"'Host' header value of request to `$uri` doesn't match request target authority",
+    else throw IllegalUriException(
+      s"'Host' header value of request to `$uri` doesn't match request target authority",
       s"Host header: $hostHeader\nrequest target authority: ${uri.authority}")
   }
 
@@ -244,12 +247,14 @@ object HttpRequest {
 /**
  * The immutable HTTP response model.
  */
-final case class HttpResponse(status: StatusCode = StatusCodes.OK,
-                              headers: immutable.Seq[HttpHeader] = Nil,
-                              entity: ResponseEntity = HttpEntity.Empty,
-                              protocol: HttpProtocol = HttpProtocols.`HTTP/1.1`) extends jm.HttpResponse with HttpMessage {
+final case class HttpResponse(
+  status: StatusCode = StatusCodes.OK,
+  headers: immutable.Seq[HttpHeader] = Nil,
+  entity: ResponseEntity = HttpEntity.Empty,
+  protocol: HttpProtocol = HttpProtocols.`HTTP/1.1`) extends jm.HttpResponse with HttpMessage {
   require(entity.isKnownEmpty || status.allowsEntity, "Responses with this status code must have an empty entity")
-  require(protocol == HttpProtocols.`HTTP/1.1` || !entity.isInstanceOf[HttpEntity.Chunked],
+  require(
+    protocol == HttpProtocols.`HTTP/1.1` || !entity.isInstanceOf[HttpEntity.Chunked],
     "HTTP/1.0 responses must not have a chunked entity")
 
   type Self = HttpResponse

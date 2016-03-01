@@ -26,10 +26,11 @@ private[http] object WebSocket {
   /**
    * A stack of all the higher WS layers between raw frames and the user API.
    */
-  def stack(serverSide: Boolean,
-            maskingRandomFactory: () ⇒ Random,
-            closeTimeout: FiniteDuration = 3.seconds,
-            log: LoggingAdapter): BidiFlow[FrameEvent, Message, Message, FrameEvent, NotUsed] =
+  def stack(
+    serverSide: Boolean,
+    maskingRandomFactory: () ⇒ Random,
+    closeTimeout: FiniteDuration = 3.seconds,
+    log: LoggingAdapter): BidiFlow[FrameEvent, Message, Message, FrameEvent, NotUsed] =
     masking(serverSide, maskingRandomFactory) atop
       frameHandling(serverSide, closeTimeout, log) atop
       messageAPI(serverSide, closeTimeout)
@@ -50,9 +51,10 @@ private[http] object WebSocket {
    * The layer that implements all low-level frame handling, like handling control frames, collecting messages
    * from frames, decoding text messages, close handling, etc.
    */
-  def frameHandling(serverSide: Boolean = true,
-                    closeTimeout: FiniteDuration,
-                    log: LoggingAdapter): BidiFlow[FrameEventOrError, FrameHandler.Output, FrameOutHandler.Input, FrameStart, NotUsed] =
+  def frameHandling(
+    serverSide: Boolean = true,
+    closeTimeout: FiniteDuration,
+    log: LoggingAdapter): BidiFlow[FrameEventOrError, FrameHandler.Output, FrameOutHandler.Input, FrameStart, NotUsed] =
     BidiFlow.fromFlows(
       FrameHandler.create(server = serverSide),
       FrameOutHandler.create(serverSide, closeTimeout, log))
@@ -61,8 +63,9 @@ private[http] object WebSocket {
   /**
    * The layer that provides the high-level user facing API on top of frame handling.
    */
-  def messageAPI(serverSide: Boolean,
-                 closeTimeout: FiniteDuration): BidiFlow[FrameHandler.Output, Message, Message, FrameOutHandler.Input, NotUsed] = {
+  def messageAPI(
+    serverSide: Boolean,
+    closeTimeout: FiniteDuration): BidiFlow[FrameHandler.Output, Message, Message, FrameOutHandler.Input, NotUsed] = {
     /* Completes this branch of the flow if no more messages are expected and converts close codes into errors */
     class PrepareForUserHandler extends PushStage[MessagePart, MessagePart] {
       var inMessage = false

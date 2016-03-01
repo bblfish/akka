@@ -52,7 +52,7 @@ class TestActorRef[T <: Actor](
   import TestActorRef.InternalGetActor
 
   protected override def newActorCell(system: ActorSystemImpl, ref: InternalActorRef, props: Props,
-                                      dispatcher: MessageDispatcher, supervisor: InternalActorRef): ActorCell =
+    dispatcher: MessageDispatcher, supervisor: InternalActorRef): ActorCell =
     new ActorCell(system, ref, props, dispatcher, supervisor) {
       override def autoReceiveMessage(msg: Envelope) {
         msg.message match {
@@ -149,7 +149,8 @@ object TestActorRef {
   def apply[T <: Actor](implicit t: ClassTag[T], system: ActorSystem): TestActorRef[T] = apply[T](randomName)
 
   private def dynamicCreateRecover[U]: PartialFunction[Throwable, U] = {
-    case exception ⇒ throw ActorInitializationException(null,
+    case exception ⇒ throw ActorInitializationException(
+      null,
       "Could not instantiate Actor" +
         "\nMake sure Actor is NOT defined inside a class/trait," +
         "\nif so put it outside the class/trait, f.e. in a companion object," +

@@ -14,9 +14,10 @@ object SubFlowImpl {
   }
 }
 
-class SubFlowImpl[In, Out, Mat, F[+_], C](val subFlow: Flow[In, Out, NotUsed],
-                                          mergeBackFunction: SubFlowImpl.MergeBack[In, F],
-                                          finishFunction: Sink[In, NotUsed] ⇒ C)
+class SubFlowImpl[In, Out, Mat, F[+_], C](
+  val subFlow: Flow[In, Out, NotUsed],
+  mergeBackFunction: SubFlowImpl.MergeBack[In, F],
+  finishFunction: Sink[In, NotUsed] ⇒ C)
   extends SubFlow[Out, Mat, F, C] {
 
   override def deprecatedAndThen[U](op: Stages.StageModule): SubFlow[U, Mat, F, C] =

@@ -608,7 +608,8 @@ final class ClusterReceptionist(pubSubMediator: ActorRef, settings: ClusterRecep
   val verboseHeartbeat = cluster.settings.Debug.VerboseHeartbeatLogging
   import cluster.selfAddress
 
-  require(role.forall(cluster.selfRoles.contains),
+  require(
+    role.forall(cluster.selfRoles.contains),
     s"This cluster member [${selfAddress}] doesn't have the role [$role]")
 
   var nodes: immutable.SortedSet[Address] = {

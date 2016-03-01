@@ -12,7 +12,7 @@ import akka.remote.transport.netty.NettyTransportSettings.{ Udp, Tcp, Mode }
 import akka.remote.transport.{ AssociationHandle, Transport }
 import akka.{ OnlyCauseStackTrace, ConfigurationException }
 import com.typesafe.config.Config
-import java.net.{ SocketAddress, InetAddress, InetSocketAddress}
+import java.net.{ SocketAddress, InetAddress, InetSocketAddress }
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.{ ConcurrentHashMap, Executors, CancellationException }
 import org.jboss.netty.bootstrap.{ ConnectionlessBootstrap, Bootstrap, ClientBootstrap, ServerBootstrap }
@@ -22,7 +22,7 @@ import org.jboss.netty.channel.group.{ DefaultChannelGroup, ChannelGroup, Channe
 import org.jboss.netty.channel.socket.nio.{ NioWorkerPool, NioDatagramChannelFactory, NioServerSocketChannelFactory, NioClientSocketChannelFactory }
 import org.jboss.netty.handler.codec.frame.{ LengthFieldBasedFrameDecoder, LengthFieldPrepender }
 import org.jboss.netty.handler.ssl.SslHandler
-import scala.concurrent.duration.{ FiniteDuration}
+import scala.concurrent.duration.{ FiniteDuration }
 import scala.concurrent.{ ExecutionContext, Promise, Future, blocking }
 import scala.util.{ Try }
 import scala.util.control.{ NoStackTrace, NonFatal }
@@ -162,10 +162,11 @@ private[netty] trait CommonHandlers extends NettyHelpers {
 
   protected def createHandle(channel: Channel, localAddress: Address, remoteAddress: Address): AssociationHandle
 
-  protected def registerListener(channel: Channel,
-                                 listener: HandleEventListener,
-                                 msg: ChannelBuffer,
-                                 remoteSocketAddress: InetSocketAddress): Unit
+  protected def registerListener(
+    channel: Channel,
+    listener: HandleEventListener,
+    msg: ChannelBuffer,
+    remoteSocketAddress: InetSocketAddress): Unit
 
   final protected def init(channel: Channel, remoteSocketAddress: SocketAddress, remoteAddress: Address, msg: ChannelBuffer)(
     op: (AssociationHandle ⇒ Any)): Unit = {
@@ -188,8 +189,9 @@ private[netty] trait CommonHandlers extends NettyHelpers {
 /**
  * INTERNAL API
  */
-private[netty] abstract class ServerHandler(protected final val transport: NettyTransport,
-                                            private final val associationListenerFuture: Future[AssociationEventListener])
+private[netty] abstract class ServerHandler(
+  protected final val transport: NettyTransport,
+  private final val associationListenerFuture: Future[AssociationEventListener])
   extends NettyServerHelpers with CommonHandlers {
 
   import transport.executionContext
@@ -200,7 +202,7 @@ private[netty] abstract class ServerHandler(protected final val transport: Netty
       case listener: AssociationEventListener ⇒
         val remoteAddress = NettyTransport.addressFromSocketAddress(remoteSocketAddress, transport.schemeIdentifier,
           transport.system.name, hostName = None, port = None).getOrElse(
-            throw new NettyTransportException(s"Unknown inbound remote address type [${remoteSocketAddress.getClass.getName}]"))
+          throw new NettyTransportException(s"Unknown inbound remote address type [${remoteSocketAddress.getClass.getName}]"))
         init(channel, remoteSocketAddress, remoteAddress, msg) { listener notify InboundAssociation(_) }
     }
   }
@@ -238,7 +240,7 @@ private[transport] object NettyTransport {
   val uniqueIdCounter = new AtomicInteger(0)
 
   def addressFromSocketAddress(addr: SocketAddress, schemeIdentifier: String, systemName: String,
-                               hostName: Option[String], port: Option[Int]): Option[Address] = addr match {
+    hostName: Option[String], port: Option[Int]): Option[Address] = addr match {
     case sa: InetSocketAddress ⇒ Some(Address(schemeIdentifier, systemName,
       hostName.getOrElse(sa.getHostString), port.getOrElse(sa.getPort)))
     case _ ⇒ None
@@ -246,7 +248,7 @@ private[transport] object NettyTransport {
 
   // Need to do like this for binary compatibility reasons
   def addressFromSocketAddress(addr: SocketAddress, schemeIdentifier: String, systemName: String,
-                               hostName: Option[String]): Option[Address] =
+    hostName: Option[String]): Option[Address] =
     addressFromSocketAddress(addr, schemeIdentifier, systemName, hostName, port = None)
 }
 

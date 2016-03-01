@@ -269,7 +269,7 @@ object Source {
    * Combines several sources with fan-in strategy like `Merge` or `Concat` and returns `Source`.
    */
   def combine[T, U](first: Source[T, _ <: Any], second: Source[T, _ <: Any], rest: java.util.List[Source[T, _ <: Any]],
-                    strategy: function.Function[java.lang.Integer, _ <: Graph[UniformFanInShape[T, U], NotUsed]]): Source[U, NotUsed] = {
+    strategy: function.Function[java.lang.Integer, _ <: Graph[UniformFanInShape[T, U], NotUsed]]): Source[U, NotUsed] = {
     import scala.collection.JavaConverters._
     val seq = if (rest != null) rest.asScala.map(_.asScala) else Seq()
     new Source(scaladsl.Source.combine(first.asScala, second.asScala, seq: _*)(num ⇒ strategy.apply(num)))
@@ -472,8 +472,9 @@ final class Source[+Out, +Mat](delegate: scaladsl.Source[Out, Mat]) extends Grap
    *
    * @see [[#concat]].
    */
-  def concatMat[T >: Out, M, M2](that: Graph[SourceShape[T], M],
-                                 matF: function.Function2[Mat, M, M2]): javadsl.Source[T, M2] =
+  def concatMat[T >: Out, M, M2](
+    that: Graph[SourceShape[T], M],
+    matF: function.Function2[Mat, M, M2]): javadsl.Source[T, M2] =
     new Source(delegate.concatMat(that)(combinerToScala(matF)))
 
   /**
@@ -509,8 +510,9 @@ final class Source[+Out, +Mat](delegate: scaladsl.Source[Out, Mat]) extends Grap
    *
    * @see [[#prepend]].
    */
-  def prependMat[T >: Out, M, M2](that: Graph[SourceShape[T], M],
-                                  matF: function.Function2[Mat, M, M2]): javadsl.Source[T, M2] =
+  def prependMat[T >: Out, M, M2](
+    that: Graph[SourceShape[T], M],
+    matF: function.Function2[Mat, M, M2]): javadsl.Source[T, M2] =
     new Source(delegate.prependMat(that)(combinerToScala(matF)))
 
   /**
@@ -534,8 +536,9 @@ final class Source[+Out, +Mat](delegate: scaladsl.Source[Out, Mat]) extends Grap
    *
    * @see [[#alsoTo]]
    */
-  def alsoToMat[M2, M3](that: Graph[SinkShape[Out], M2],
-                        matF: function.Function2[Mat, M2, M3]): javadsl.Source[Out, M3] =
+  def alsoToMat[M2, M3](
+    that: Graph[SinkShape[Out], M2],
+    matF: function.Function2[Mat, M2, M3]): javadsl.Source[Out, M3] =
     new Source(delegate.alsoToMat(that)(combinerToScala(matF)))
 
   /**
@@ -577,7 +580,7 @@ final class Source[+Out, +Mat](delegate: scaladsl.Source[Out, Mat]) extends Grap
    * @see [[#interleave]].
    */
   def interleaveMat[T >: Out, M, M2](that: Graph[SourceShape[T], M], segmentSize: Int,
-                                     matF: function.Function2[Mat, M, M2]): javadsl.Source[T, M2] =
+    matF: function.Function2[Mat, M, M2]): javadsl.Source[T, M2] =
     new Source(delegate.interleaveMat(that, segmentSize)(combinerToScala(matF)))
 
   /**
@@ -601,8 +604,9 @@ final class Source[+Out, +Mat](delegate: scaladsl.Source[Out, Mat]) extends Grap
    *
    * @see [[#merge]].
    */
-  def mergeMat[T >: Out, M, M2](that: Graph[SourceShape[T], M],
-                                matF: function.Function2[Mat, M, M2]): javadsl.Source[T, M2] =
+  def mergeMat[T >: Out, M, M2](
+    that: Graph[SourceShape[T], M],
+    matF: function.Function2[Mat, M, M2]): javadsl.Source[T, M2] =
     new Source(delegate.mergeMat(that)(combinerToScala(matF)))
 
   /**
@@ -633,7 +637,7 @@ final class Source[+Out, +Mat](delegate: scaladsl.Source[Out, Mat]) extends Grap
    * @see [[#mergeSorted]].
    */
   def mergeSortedMat[U >: Out, Mat2, Mat3](that: Graph[SourceShape[U], Mat2], comp: util.Comparator[U],
-                                           matF: function.Function2[Mat, Mat2, Mat3]): javadsl.Source[U, Mat3] =
+    matF: function.Function2[Mat, Mat2, Mat3]): javadsl.Source[U, Mat3] =
     new Source(delegate.mergeSortedMat(that)(combinerToScala(matF))(Ordering.comparatorToOrdering(comp)))
 
   /**
@@ -655,8 +659,9 @@ final class Source[+Out, +Mat](delegate: scaladsl.Source[Out, Mat]) extends Grap
    *
    * @see [[#zip]].
    */
-  def zipMat[T, M, M2](that: Graph[SourceShape[T], M],
-                       matF: function.Function2[Mat, M, M2]): javadsl.Source[Out @uncheckedVariance Pair T, M2] =
+  def zipMat[T, M, M2](
+    that: Graph[SourceShape[T], M],
+    matF: function.Function2[Mat, M, M2]): javadsl.Source[Out @uncheckedVariance Pair T, M2] =
     this.viaMat(Flow.create[Out].zipMat(that, Keep.right[NotUsed, M]), matF)
 
   /**
@@ -671,8 +676,9 @@ final class Source[+Out, +Mat](delegate: scaladsl.Source[Out, Mat]) extends Grap
    *
    * '''Cancels when''' downstream cancels
    */
-  def zipWith[Out2, Out3](that: Graph[SourceShape[Out2], _],
-                          combine: function.Function2[Out, Out2, Out3]): javadsl.Source[Out3, Mat] =
+  def zipWith[Out2, Out3](
+    that: Graph[SourceShape[Out2], _],
+    combine: function.Function2[Out, Out2, Out3]): javadsl.Source[Out3, Mat] =
     new Source(delegate.zipWith[Out2, Out3](that)(combinerToScala(combine)))
 
   /**
@@ -681,9 +687,10 @@ final class Source[+Out, +Mat](delegate: scaladsl.Source[Out, Mat]) extends Grap
    *
    * @see [[#zipWith]].
    */
-  def zipWithMat[Out2, Out3, M, M2](that: Graph[SourceShape[Out2], M],
-                                    combine: function.Function2[Out, Out2, Out3],
-                                    matF: function.Function2[Mat, M, M2]): javadsl.Source[Out3, M2] =
+  def zipWithMat[Out2, Out3, M, M2](
+    that: Graph[SourceShape[Out2], M],
+    combine: function.Function2[Out, Out2, Out3],
+    matF: function.Function2[Mat, M, M2]): javadsl.Source[Out3, M2] =
     new Source(delegate.zipWithMat[Out2, Out3, M, M2](that)(combinerToScala(combine))(combinerToScala(matF)))
 
   /**
@@ -1719,7 +1726,7 @@ final class Source[+Out, +Mat](delegate: scaladsl.Source[Out, Mat]) extends Grap
    * '''Cancels when''' downstream cancels
    */
   def throttle(elements: Int, per: FiniteDuration, maximumBurst: Int,
-               mode: ThrottleMode): javadsl.Source[Out, Mat] =
+    mode: ThrottleMode): javadsl.Source[Out, Mat] =
     new Source(delegate.throttle(elements, per, maximumBurst, mode))
 
   /**
@@ -1749,7 +1756,7 @@ final class Source[+Out, +Mat](delegate: scaladsl.Source[Out, Mat]) extends Grap
    * '''Cancels when''' downstream cancels
    */
   def throttle(cost: Int, per: FiniteDuration, maximumBurst: Int,
-               costCalculation: function.Function[Out, Integer], mode: ThrottleMode): javadsl.Source[Out, Mat] =
+    costCalculation: function.Function[Out, Integer], mode: ThrottleMode): javadsl.Source[Out, Mat] =
     new Source(delegate.throttle(cost, per, maximumBurst, costCalculation.apply _, mode))
 
   /**

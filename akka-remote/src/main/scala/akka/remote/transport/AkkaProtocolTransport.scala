@@ -51,7 +51,8 @@ private[remote] class AkkaProtocolSettings(config: Config) {
     else if (enabledTransports.contains("akka.remote.netty.ssl"))
       config.getMillisDuration("akka.remote.netty.ssl.connection-timeout")
     else
-      config.getMillisDuration("akka.remote.handshake-timeout").requiring(_ > Duration.Zero,
+      config.getMillisDuration("akka.remote.handshake-timeout").requiring(
+        _ > Duration.Zero,
         "handshake-timeout must be > 0")
   }
 }
@@ -247,7 +248,7 @@ private[transport] object ProtocolStateActor {
 
   // Both transports are associated, but the handler for the handle has not yet been provided
   final case class AssociatedWaitHandler(handleListener: Future[HandleEventListener], wrappedHandle: AssociationHandle,
-                                         queue: immutable.Queue[ByteString])
+    queue: immutable.Queue[ByteString])
     extends ProtocolStateData
 
   final case class ListenerReady(listener: HandleEventListener, wrappedHandle: AssociationHandle)
@@ -279,12 +280,13 @@ private[transport] object ProtocolStateActor {
       failureDetector).withDeploy(Deploy.local)
 }
 
-private[transport] class ProtocolStateActor(initialData: InitialProtocolStateData,
-                                            private val localHandshakeInfo: HandshakeInfo,
-                                            private val refuseUid: Option[Int],
-                                            private val settings: AkkaProtocolSettings,
-                                            private val codec: AkkaPduCodec,
-                                            private val failureDetector: FailureDetector)
+private[transport] class ProtocolStateActor(
+  initialData: InitialProtocolStateData,
+  private val localHandshakeInfo: HandshakeInfo,
+  private val refuseUid: Option[Int],
+  private val settings: AkkaProtocolSettings,
+  private val codec: AkkaPduCodec,
+  private val failureDetector: FailureDetector)
   extends Actor with FSM[AssociationState, ProtocolStateData]
   with RequiresMessageQueue[UnboundedMessageQueueSemantics] {
 
@@ -292,24 +294,26 @@ private[transport] class ProtocolStateActor(initialData: InitialProtocolStateDat
   import context.dispatcher
 
   // Outbound case
-  def this(handshakeInfo: HandshakeInfo,
-           remoteAddress: Address,
-           statusPromise: Promise[AssociationHandle],
-           transport: Transport,
-           settings: AkkaProtocolSettings,
-           codec: AkkaPduCodec,
-           failureDetector: FailureDetector,
-           refuseUid: Option[Int]) = {
+  def this(
+    handshakeInfo: HandshakeInfo,
+    remoteAddress: Address,
+    statusPromise: Promise[AssociationHandle],
+    transport: Transport,
+    settings: AkkaProtocolSettings,
+    codec: AkkaPduCodec,
+    failureDetector: FailureDetector,
+    refuseUid: Option[Int]) = {
     this(OutboundUnassociated(remoteAddress, statusPromise, transport), handshakeInfo, refuseUid, settings, codec, failureDetector)
   }
 
   // Inbound case
-  def this(handshakeInfo: HandshakeInfo,
-           wrappedHandle: AssociationHandle,
-           associationListener: AssociationEventListener,
-           settings: AkkaProtocolSettings,
-           codec: AkkaPduCodec,
-           failureDetector: FailureDetector) = {
+  def this(
+    handshakeInfo: HandshakeInfo,
+    wrappedHandle: AssociationHandle,
+    associationListener: AssociationEventListener,
+    settings: AkkaProtocolSettings,
+    codec: AkkaPduCodec,
+    failureDetector: FailureDetector) = {
     this(InboundUnassociated(associationListener, wrappedHandle), handshakeInfo, refuseUid = None, settings, codec, failureDetector)
   }
 
@@ -413,7 +417,8 @@ private[transport] class ProtocolStateActor(initialData: InitialProtocolStateDat
               immutable.Queue.empty)
           } else {
             if (log.isDebugEnabled)
-              log.warning(s"Association attempt with mismatching cookie from [{}]. Expected [{}] but received [{}].",
+              log.warning(
+                s"Association attempt with mismatching cookie from [{}]. Expected [{}] but received [{}].",
                 info.origin, localHandshakeInfo.cookie.getOrElse(""), info.cookie.getOrElse(""))
             else
               log.warning(s"Association attempt with mismatching cookie from [{}].", info.origin)
@@ -581,9 +586,10 @@ private[transport] class ProtocolStateActor(initialData: InitialProtocolStateDat
   private def listenForListenerRegistration(readHandlerPromise: Promise[HandleEventListener]): Unit =
     readHandlerPromise.future.map { HandleListenerRegistered(_) } pipeTo self
 
-  private def notifyOutboundHandler(wrappedHandle: AssociationHandle,
-                                    handshakeInfo: HandshakeInfo,
-                                    statusPromise: Promise[AssociationHandle]): Future[HandleEventListener] = {
+  private def notifyOutboundHandler(
+    wrappedHandle: AssociationHandle,
+    handshakeInfo: HandshakeInfo,
+    statusPromise: Promise[AssociationHandle]): Future[HandleEventListener] = {
     val readHandlerPromise = Promise[HandleEventListener]()
     listenForListenerRegistration(readHandlerPromise)
 
@@ -599,9 +605,10 @@ private[transport] class ProtocolStateActor(initialData: InitialProtocolStateDat
     readHandlerPromise.future
   }
 
-  private def notifyInboundHandler(wrappedHandle: AssociationHandle,
-                                   handshakeInfo: HandshakeInfo,
-                                   associationListener: AssociationEventListener): Future[HandleEventListener] = {
+  private def notifyInboundHandler(
+    wrappedHandle: AssociationHandle,
+    handshakeInfo: HandshakeInfo,
+    associationListener: AssociationEventListener): Future[HandleEventListener] = {
     val readHandlerPromise = Promise[HandleEventListener]()
     listenForListenerRegistration(readHandlerPromise)
 

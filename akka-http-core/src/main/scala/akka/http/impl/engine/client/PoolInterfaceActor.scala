@@ -46,9 +46,10 @@ private object PoolInterfaceActor {
  *   To the inside (i.e. the running connection pool flow) the gateway actor acts as request source
  *   (ActorPublisher) and response sink (ActorSubscriber).
  */
-private class PoolInterfaceActor(hcps: HostConnectionPoolSetup,
-                                 shutdownCompletedPromise: Promise[Done],
-                                 gateway: PoolGateway)(implicit fm: Materializer)
+private class PoolInterfaceActor(
+  hcps: HostConnectionPoolSetup,
+  shutdownCompletedPromise: Promise[Done],
+  gateway: PoolGateway)(implicit fm: Materializer)
   extends ActorSubscriber with ActorPublisher[RequestContext] with ActorLogging {
   import PoolInterfaceActor._
 

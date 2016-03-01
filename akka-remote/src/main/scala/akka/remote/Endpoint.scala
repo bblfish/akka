@@ -32,25 +32,28 @@ import scala.concurrent.Future
  * INTERNAL API
  */
 private[remote] trait InboundMessageDispatcher {
-  def dispatch(recipient: InternalActorRef,
-               recipientAddress: Address,
-               serializedMessage: SerializedMessage,
-               senderOption: Option[ActorRef]): Unit
+  def dispatch(
+    recipient: InternalActorRef,
+    recipientAddress: Address,
+    serializedMessage: SerializedMessage,
+    senderOption: Option[ActorRef]): Unit
 }
 
 /**
  * INTERNAL API
  */
-private[remote] class DefaultMessageDispatcher(private val system: ExtendedActorSystem,
-                                               private val provider: RemoteActorRefProvider,
-                                               private val log: LoggingAdapter) extends InboundMessageDispatcher {
+private[remote] class DefaultMessageDispatcher(
+  private val system: ExtendedActorSystem,
+  private val provider: RemoteActorRefProvider,
+  private val log: LoggingAdapter) extends InboundMessageDispatcher {
 
   private val remoteDaemon = provider.remoteDaemon
 
-  override def dispatch(recipient: InternalActorRef,
-                        recipientAddress: Address,
-                        serializedMessage: SerializedMessage,
-                        senderOption: Option[ActorRef]): Unit = {
+  override def dispatch(
+    recipient: InternalActorRef,
+    recipientAddress: Address,
+    serializedMessage: SerializedMessage,
+    senderOption: Option[ActorRef]): Unit = {
 
     import provider.remoteSettings._
 
@@ -76,7 +79,8 @@ private[remote] class DefaultMessageDispatcher(private val system: ExtendedActor
           case sel: ActorSelectionMessage ⇒
             if (UntrustedMode && (!TrustedSelectionPaths.contains(sel.elements.mkString("/", "/", "")) ||
               sel.msg.isInstanceOf[PossiblyHarmful] || l != provider.rootGuardian))
-              log.debug("operating in UntrustedMode, dropping inbound actor selection to [{}], " +
+              log.debug(
+                "operating in UntrustedMode, dropping inbound actor selection to [{}], " +
                 "allow it by adding the path to 'akka.remote.trusted-selection-paths' configuration",
                 sel.elements.mkString("/", "/", ""))
             else
@@ -94,10 +98,12 @@ private[remote] class DefaultMessageDispatcher(private val system: ExtendedActor
           // if it was originally addressed to us but is in fact remote from our point of view (i.e. remote-deployed)
           r.!(payload)(sender)
         else
-          log.error("dropping message [{}] for non-local recipient [{}] arriving at [{}] inbound addresses are [{}]",
+          log.error(
+            "dropping message [{}] for non-local recipient [{}] arriving at [{}] inbound addresses are [{}]",
             payloadClass, r, recipientAddress, provider.transport.addresses.mkString(", "))
 
-      case r ⇒ log.error("dropping message [{}] for unknown recipient [{}] arriving at [{}] inbound addresses are [{}]",
+      case r ⇒ log.error(
+        "dropping message [{}] for unknown recipient [{}] arriving at [{}] inbound addresses are [{}]",
         payloadClass, r, recipientAddress, provider.transport.addresses.mkString(", "))
 
     }
@@ -129,10 +135,11 @@ private[remote] final case class ShutDownAssociation(localAddress: Address, remo
  * INTERNAL API
  */
 @SerialVersionUID(2L)
-private[remote] final case class InvalidAssociation(localAddress: Address,
-                                                    remoteAddress: Address,
-                                                    cause: Throwable,
-                                                    disassociationInfo: Option[DisassociateInfo] = None)
+private[remote] final case class InvalidAssociation(
+  localAddress: Address,
+  remoteAddress: Address,
+  cause: Throwable,
+  disassociationInfo: Option[DisassociateInfo] = None)
   extends EndpointException("Invalid address: " + remoteAddress, cause) with AssociationProblem
 
 /**
@@ -209,7 +216,8 @@ private[remote] class ReliableDeliverySupervisor(
     case e @ (_: AssociationProblem) ⇒ Escalate
     case NonFatal(e) ⇒
       val causedBy = if (e.getCause == null) "" else s"Caused by: [${e.getCause.getMessage}]"
-      log.warning("Association with remote system [{}] has failed, address is now gated for [{}] ms. Reason: [{}] {}",
+      log.warning(
+        "Association with remote system [{}] has failed, address is now gated for [{}] ms. Reason: [{}] {}",
         remoteAddress, settings.RetryGateClosedFor.toMillis, e.getMessage, causedBy)
       uidConfirmed = false // Need confirmation of UID again
       if (bufferWasInUse) {
@@ -703,7 +711,8 @@ private[remote] class EndpointWriter(
       if (size > settings.LogBufferSizeExceeding) {
         val now = System.nanoTime()
         if (now - largeBufferLogTimestamp >= LogBufferSizeInterval) {
-          log.warning("[{}] buffered messages in EndpointWriter for [{}]. " +
+          log.warning(
+            "[{}] buffered messages in EndpointWriter for [{}]. " +
             "You should probably implement flow control to avoid flooding the remote connection.",
             size, remoteAddress)
           largeBufferLogTimestamp = now
@@ -965,7 +974,8 @@ private[remote] class EndpointReader(
       }
 
     case InboundPayload(oversized) ⇒
-      log.error(new OversizedPayloadException(s"Discarding oversized payload received: " +
+      log.error(
+        new OversizedPayloadException(s"Discarding oversized payload received: " +
         s"max allowed size [${transport.maximumPayloadBytes}] bytes, actual size [${oversized.size}] bytes."),
         "Transient error while reading from association (association remains live)")
 

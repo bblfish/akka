@@ -210,7 +210,8 @@ final case class ConsistentHashingRoutingLogic(
         case _ if hashMapping.isDefinedAt(message) ⇒ target(hashMapping(message))
         case hashable: ConsistentHashable          ⇒ target(hashable.consistentHashKey)
         case other ⇒
-          log.warning("Message [{}] must be handled by hashMapping, or implement [{}] or be wrapped in [{}]",
+          log.warning(
+            "Message [{}] must be handled by hashMapping, or implement [{}] or be wrapped in [{}]",
             message.getClass.getName, classOf[ConsistentHashable].getName,
             classOf[ConsistentHashableEnvelope].getName)
           NoRoutee

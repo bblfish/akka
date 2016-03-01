@@ -45,9 +45,10 @@ private[http] object OutgoingConnectionBlueprint {
                                   |  Merge     |<------------------------------------------ V
                                   +------------+
   */
-  def apply(hostHeader: Host,
-            settings: ClientConnectionSettings,
-            log: LoggingAdapter): Http.ClientLayer = {
+  def apply(
+    hostHeader: Host,
+    settings: ClientConnectionSettings,
+    log: LoggingAdapter): Http.ClientLayer = {
     import settings._
 
     // the initial header parser we initially use for every connection,

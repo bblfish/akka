@@ -146,7 +146,7 @@ object SnapshotSelectionCriteria {
    * Java API.
    */
   def create(maxSequenceNr: Long, maxTimestamp: Long,
-             minSequenceNr: Long, minTimestamp: Long) =
+    minSequenceNr: Long, minTimestamp: Long) =
     SnapshotSelectionCriteria(maxSequenceNr, maxTimestamp, minSequenceNr, minTimestamp)
 
   /**

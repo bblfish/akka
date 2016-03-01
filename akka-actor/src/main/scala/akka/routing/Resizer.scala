@@ -104,50 +104,50 @@ case class DefaultResizer(
    */
   val lowerBound: Int = 1,
   /**
- * The most number of routees the router should ever have.
- * Must be greater than or equal to `lowerBound`.
- */
+   * The most number of routees the router should ever have.
+   * Must be greater than or equal to `lowerBound`.
+   */
   val upperBound: Int = 10,
   /**
- * Threshold to evaluate if routee is considered to be busy (under pressure).
- * Implementation depends on this value (default is 1).
- * <ul>
- * <li> 0:   number of routees currently processing a message.</li>
- * <li> 1:   number of routees currently processing a message has
- *           some messages in mailbox.</li>
- * <li> &gt; 1: number of routees with at least the configured `pressureThreshold`
- *           messages in their mailbox. Note that estimating mailbox size of
- *           default UnboundedMailbox is O(N) operation.</li>
- * </ul>
- */
+   * Threshold to evaluate if routee is considered to be busy (under pressure).
+   * Implementation depends on this value (default is 1).
+   * <ul>
+   * <li> 0:   number of routees currently processing a message.</li>
+   * <li> 1:   number of routees currently processing a message has
+   *           some messages in mailbox.</li>
+   * <li> &gt; 1: number of routees with at least the configured `pressureThreshold`
+   *           messages in their mailbox. Note that estimating mailbox size of
+   *           default UnboundedMailbox is O(N) operation.</li>
+   * </ul>
+   */
   val pressureThreshold: Int = 1,
   /**
- * Percentage to increase capacity whenever all routees are busy.
- * For example, 0.2 would increase 20% (rounded up), i.e. if current
- * capacity is 6 it will request an increase of 2 more routees.
- */
+   * Percentage to increase capacity whenever all routees are busy.
+   * For example, 0.2 would increase 20% (rounded up), i.e. if current
+   * capacity is 6 it will request an increase of 2 more routees.
+   */
   val rampupRate: Double = 0.2,
   /**
- * Minimum fraction of busy routees before backing off.
- * For example, if this is 0.3, then we'll remove some routees only when
- * less than 30% of routees are busy, i.e. if current capacity is 10 and
- * 3 are busy then the capacity is unchanged, but if 2 or less are busy
- * the capacity is decreased.
- *
- * Use 0.0 or negative to avoid removal of routees.
- */
+   * Minimum fraction of busy routees before backing off.
+   * For example, if this is 0.3, then we'll remove some routees only when
+   * less than 30% of routees are busy, i.e. if current capacity is 10 and
+   * 3 are busy then the capacity is unchanged, but if 2 or less are busy
+   * the capacity is decreased.
+   *
+   * Use 0.0 or negative to avoid removal of routees.
+   */
   val backoffThreshold: Double = 0.3,
   /**
- * Fraction of routees to be removed when the resizer reaches the
- * backoffThreshold.
- * For example, 0.1 would decrease 10% (rounded up), i.e. if current
- * capacity is 9 it will request an decrease of 1 routee.
- */
+   * Fraction of routees to be removed when the resizer reaches the
+   * backoffThreshold.
+   * For example, 0.1 would decrease 10% (rounded up), i.e. if current
+   * capacity is 9 it will request an decrease of 1 routee.
+   */
   val backoffRate: Double = 0.1,
   /**
- * Number of messages between resize operation.
- * Use 1 to resize before each message.
- */
+   * Number of messages between resize operation.
+   * Use 1 to resize before each message.
+   */
   val messagesPerResize: Int = 10) extends Resizer {
 
   /**

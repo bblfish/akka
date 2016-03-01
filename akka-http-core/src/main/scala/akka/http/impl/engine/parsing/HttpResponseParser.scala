@@ -80,10 +80,11 @@ private[http] class HttpResponseParser(_settings: ParserSettings, _headerParser:
 
   // http://tools.ietf.org/html/rfc7230#section-3.3
   def parseEntity(headers: List[HttpHeader], protocol: HttpProtocol, input: ByteString, bodyStart: Int,
-                  clh: Option[`Content-Length`], cth: Option[`Content-Type`], teh: Option[`Transfer-Encoding`],
-                  expect100continue: Boolean, hostHeaderPresent: Boolean, closeAfterResponseCompletion: Boolean): StateResult = {
-    def emitResponseStart(createEntity: EntityCreator[ResponseOutput, ResponseEntity],
-                          headers: List[HttpHeader] = headers) =
+    clh: Option[`Content-Length`], cth: Option[`Content-Type`], teh: Option[`Transfer-Encoding`],
+    expect100continue: Boolean, hostHeaderPresent: Boolean, closeAfterResponseCompletion: Boolean): StateResult = {
+    def emitResponseStart(
+      createEntity: EntityCreator[ResponseOutput, ResponseEntity],
+      headers: List[HttpHeader] = headers) =
       emit(ResponseStart(statusCode, protocol, headers, createEntity, closeAfterResponseCompletion))
     def finishEmptyResponse() = {
       emitResponseStart(emptyEntity(cth))

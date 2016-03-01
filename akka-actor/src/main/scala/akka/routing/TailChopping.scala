@@ -45,7 +45,7 @@ import scala.util.Random
  */
 @SerialVersionUID(1L)
 final case class TailChoppingRoutingLogic(scheduler: Scheduler, within: FiniteDuration,
-                                          interval: FiniteDuration, context: ExecutionContext) extends RoutingLogic {
+  interval: FiniteDuration, context: ExecutionContext) extends RoutingLogic {
   override def select(message: Any, routees: immutable.IndexedSeq[Routee]): Routee = {
     if (routees.isEmpty) NoRoutee
     else TailChoppingRoutees(scheduler, routees, within, interval)(context)

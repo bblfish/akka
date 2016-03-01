@@ -218,7 +218,8 @@ object ActorSelection {
                   if (matchingChildren.isEmpty && !sel.wildcardFanOut)
                     emptyRef.tell(sel, sender)
                   else {
-                    val m = sel.copy(elements = iter.toVector,
+                    val m = sel.copy(
+                      elements = iter.toVector,
                       wildcardFanOut = sel.wildcardFanOut || matchingChildren.size > 1)
                     matchingChildren.foreach(c ⇒ deliverSelection(c.asInstanceOf[InternalActorRef], sender, m))
                   }

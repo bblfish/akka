@@ -155,13 +155,14 @@ private[akka] final class ActorSubscriberSink[In](props: Props, val attributes: 
  * INTERNAL API
  */
 private[akka] final class ActorRefSink[In](ref: ActorRef, onCompleteMessage: Any,
-                                           val attributes: Attributes,
-                                           shape: SinkShape[In]) extends SinkModule[In, NotUsed](shape) {
+  val attributes: Attributes,
+  shape: SinkShape[In]) extends SinkModule[In, NotUsed](shape) {
 
   override def create(context: MaterializationContext) = {
     val actorMaterializer = ActorMaterializer.downcast(context.materializer)
     val effectiveSettings = actorMaterializer.effectiveSettings(context.effectiveAttributes)
-    val subscriberRef = actorMaterializer.actorOf(context,
+    val subscriberRef = actorMaterializer.actorOf(
+      context,
       ActorRefSinkActor.props(ref, effectiveSettings.maxInputBufferSize, onCompleteMessage))
     (akka.stream.actor.ActorSubscriber[In](subscriberRef), NotUsed)
   }

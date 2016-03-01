@@ -39,13 +39,14 @@ object CircuitBreakerProxy {
    * @param failureMap           function to map a failure into a response message. The failing response message is wrapped
    *                             into a [[akka.contrib.circuitbreaker.CircuitBreakerProxy.CircuitOpenFailure]] object
    */
-  def props(target: ActorRef,
-            maxFailures: Int,
-            callTimeout: Timeout,
-            resetTimeout: Timeout,
-            circuitEventListener: Option[ActorRef],
-            failureDetector: Any ⇒ Boolean,
-            failureMap: CircuitOpenFailure ⇒ Any) =
+  def props(
+    target: ActorRef,
+    maxFailures: Int,
+    callTimeout: Timeout,
+    resetTimeout: Timeout,
+    circuitEventListener: Option[ActorRef],
+    failureDetector: Any ⇒ Boolean,
+    failureMap: CircuitOpenFailure ⇒ Any) =
     Props(new CircuitBreakerProxy(target, maxFailures, callTimeout, resetTimeout, circuitEventListener, failureDetector, failureMap))
 
   sealed trait CircuitBreakerCommand
@@ -222,20 +223,23 @@ final class CircuitBreakerProxy(
         val isFailure = failureDetector(response)
 
         if (isFailure) {
-          log.debug("Response '{}' is considered as failure sending self-message to ask incrementing failure count (origin state was {})",
+          log.debug(
+            "Response '{}' is considered as failure sending self-message to ask incrementing failure count (origin state was {})",
             response, state)
 
           self ! CallFailed
         } else {
 
-          log.debug("Request '{}' succeeded with response {}, returning response to sender {} and sending message to ask to reset failure count (origin state was {})",
+          log.debug(
+            "Request '{}' succeeded with response {}, returning response to sender {} and sending message to ask to reset failure count (origin state was {})",
             message, response, currentSender, state)
 
           self ! CallSucceeded
         }
 
       case Failure(reason) ⇒
-        log.debug("Request '{}' to target {} failed with exception {}, sending self-message to ask incrementing failure count (origin state was {})",
+        log.debug(
+          "Request '{}' to target {} failed with exception {}, sending self-message to ask incrementing failure count (origin state was {})",
           message, target, reason, state)
 
         self ! CallFailed
@@ -243,15 +247,15 @@ final class CircuitBreakerProxy(
   }
 
   onTransition {
-    case from -> Closed ⇒
+    case from → Closed ⇒
       log.debug("Moving from state {} to state CLOSED", from)
       circuitEventListener foreach { _ ! CircuitClosed(self) }
 
-    case from -> HalfOpen ⇒
+    case from → HalfOpen ⇒
       log.debug("Moving from state {} to state HALF OPEN", from)
       circuitEventListener foreach { _ ! CircuitHalfOpen(self) }
 
-    case from -> Open ⇒
+    case from → Open ⇒
       log.debug("Moving from state {} to state OPEN", from)
       circuitEventListener foreach { _ ! CircuitOpen(self) }
   }

@@ -8,7 +8,7 @@ import java.util.OptionalLong
 
 import language.implicitConversions
 import java.io.File
-import java.lang.{ Iterable ⇒ JIterable}
+import java.lang.{ Iterable ⇒ JIterable }
 import scala.util.control.NonFatal
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -264,9 +264,10 @@ object HttpEntity {
   /**
    * The model for the entity of a "regular" unchunked HTTP message with a known non-zero length.
    */
-  final case class Default(contentType: ContentType,
-                           contentLength: Long,
-                           data: Source[ByteString, Any])
+  final case class Default(
+    contentType: ContentType,
+    contentLength: Long,
+    data: Source[ByteString, Any])
     extends jm.HttpEntity.Default with UniversalEntity {
     require(contentLength > 0, "contentLength must be positive (use `HttpEntity.empty(contentType)` for empty entities)")
     def isKnownEmpty = false
@@ -515,18 +516,18 @@ object HttpEntity {
    */
   private[http] def captureTermination[T <: HttpEntity](entity: T): (T, Future[Unit]) =
     entity match {
-      case x: HttpEntity.Strict ⇒ x.asInstanceOf[T] -> FastFuture.successful(())
+      case x: HttpEntity.Strict ⇒ x.asInstanceOf[T] → FastFuture.successful(())
       case x: HttpEntity.Default ⇒
         val (newData, whenCompleted) = StreamUtils.captureTermination(x.data)
-        x.copy(data = newData).asInstanceOf[T] -> whenCompleted
+        x.copy(data = newData).asInstanceOf[T] → whenCompleted
       case x: HttpEntity.Chunked ⇒
         val (newChunks, whenCompleted) = StreamUtils.captureTermination(x.chunks)
-        x.copy(chunks = newChunks).asInstanceOf[T] -> whenCompleted
+        x.copy(chunks = newChunks).asInstanceOf[T] → whenCompleted
       case x: HttpEntity.CloseDelimited ⇒
         val (newData, whenCompleted) = StreamUtils.captureTermination(x.data)
-        x.copy(data = newData).asInstanceOf[T] -> whenCompleted
+        x.copy(data = newData).asInstanceOf[T] → whenCompleted
       case x: HttpEntity.IndefiniteLength ⇒
         val (newData, whenCompleted) = StreamUtils.captureTermination(x.data)
-        x.copy(data = newData).asInstanceOf[T] -> whenCompleted
+        x.copy(data = newData).asInstanceOf[T] → whenCompleted
     }
 }

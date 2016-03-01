@@ -88,10 +88,11 @@ final class ClusterSingletonProxySettings(
   def withBufferSize(bufferSize: Int): ClusterSingletonProxySettings =
     copy(bufferSize = bufferSize)
 
-  private def copy(singletonName: String = singletonName,
-                   role: Option[String] = role,
-                   singletonIdentificationInterval: FiniteDuration = singletonIdentificationInterval,
-                   bufferSize: Int = bufferSize): ClusterSingletonProxySettings =
+  private def copy(
+    singletonName: String = singletonName,
+    role: Option[String] = role,
+    singletonIdentificationInterval: FiniteDuration = singletonIdentificationInterval,
+    bufferSize: Int = bufferSize): ClusterSingletonProxySettings =
     new ClusterSingletonProxySettings(singletonName, role, singletonIdentificationInterval, bufferSize)
 }
 
@@ -252,7 +253,8 @@ final class ClusterSingletonProxy(singletonManagerPath: String, settings: Cluste
       singleton match {
         case Some(s) ⇒
           if (log.isDebugEnabled)
-            log.debug("Forwarding message of type [{}] to current singleton instance at [{}]: {}",
+            log.debug(
+              "Forwarding message of type [{}] to current singleton instance at [{}]: {}",
               Logging.simpleName(msg.getClass.getName), s.path)
           s forward msg
         case None ⇒

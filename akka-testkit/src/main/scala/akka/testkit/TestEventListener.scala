@@ -95,7 +95,8 @@ abstract class EventFilter(occurrences: Int) {
    * `occurrences` parameter specifies.
    */
   def assertDone(max: Duration): Unit =
-    assert(awaitDone(max),
+    assert(
+      awaitDone(max),
       if (todo > 0) s"$todo messages outstanding on $this"
       else s"received ${-todo} excess messages on $this")
 
@@ -199,7 +200,8 @@ object EventFilter {
    * source filter).''
    */
   def warning(message: String = null, source: String = null, start: String = "", pattern: String = null, occurrences: Int = Int.MaxValue): EventFilter =
-    WarningFilter(Option(source),
+    WarningFilter(
+      Option(source),
       if (message ne null) Left(message) else Option(pattern) map (new Regex(_)) toRight start,
       message ne null)(occurrences)
 
@@ -218,7 +220,8 @@ object EventFilter {
    * source filter).''
    */
   def info(message: String = null, source: String = null, start: String = "", pattern: String = null, occurrences: Int = Int.MaxValue): EventFilter =
-    InfoFilter(Option(source),
+    InfoFilter(
+      Option(source),
       if (message ne null) Left(message) else Option(pattern) map (new Regex(_)) toRight start,
       message ne null)(occurrences)
 
@@ -237,7 +240,8 @@ object EventFilter {
    * source filter).''
    */
   def debug(message: String = null, source: String = null, start: String = "", pattern: String = null, occurrences: Int = Int.MaxValue): EventFilter =
-    DebugFilter(Option(source),
+    DebugFilter(
+      Option(source),
       if (message ne null) Left(message) else Option(pattern) map (new Regex(_)) toRight start,
       message ne null)(occurrences)
 
@@ -350,7 +354,8 @@ final case class WarningFilter(
    *   whether the event’s message must match the given message string or pattern completely
    */
   def this(source: String, message: String, pattern: Boolean, complete: Boolean, occurrences: Int) =
-    this(Option(source),
+    this(
+      Option(source),
       if (message eq null) Left("")
       else if (pattern) Right(new Regex(message))
       else Left(message),
@@ -393,7 +398,8 @@ final case class InfoFilter(
    *   whether the event’s message must match the given message string or pattern completely
    */
   def this(source: String, message: String, pattern: Boolean, complete: Boolean, occurrences: Int) =
-    this(Option(source),
+    this(
+      Option(source),
       if (message eq null) Left("")
       else if (pattern) Right(new Regex(message))
       else Left(message),
@@ -436,7 +442,8 @@ final case class DebugFilter(
    *   whether the event’s message must match the given message string or pattern completely
    */
   def this(source: String, message: String, pattern: Boolean, complete: Boolean, occurrences: Int) =
-    this(Option(source),
+    this(
+      Option(source),
       if (message eq null) Left("")
       else if (pattern) Right(new Regex(message))
       else Left(message),

@@ -20,7 +20,7 @@ import akka.persistence.query.EventEnvelope
  */
 private[akka] object EventsByPersistenceIdPublisher {
   def props(persistenceId: String, fromSequenceNr: Long, toSequenceNr: Long, refreshInterval: Option[FiniteDuration],
-            maxBufSize: Int, writeJournalPluginId: String): Props = {
+    maxBufSize: Int, writeJournalPluginId: String): Props = {
     refreshInterval match {
       case Some(interval) ⇒
         Props(new LiveEventsByPersistenceIdPublisher(persistenceId, fromSequenceNr, toSequenceNr, interval,

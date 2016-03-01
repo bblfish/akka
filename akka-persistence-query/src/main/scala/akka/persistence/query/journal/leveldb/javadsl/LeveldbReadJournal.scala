@@ -90,7 +90,7 @@ class LeveldbReadJournal(scaladslReadJournal: akka.persistence.query.journal.lev
    * backend journal.
    */
   override def eventsByPersistenceId(persistenceId: String, fromSequenceNr: Long,
-                                     toSequenceNr: Long): Source[EventEnvelope, NotUsed] =
+    toSequenceNr: Long): Source[EventEnvelope, NotUsed] =
     scaladslReadJournal.eventsByPersistenceId(persistenceId, fromSequenceNr, toSequenceNr).asJava
 
   /**
@@ -99,7 +99,7 @@ class LeveldbReadJournal(scaladslReadJournal: akka.persistence.query.journal.lev
    * stored after the query is completed are not included in the event stream.
    */
   override def currentEventsByPersistenceId(persistenceId: String, fromSequenceNr: Long,
-                                            toSequenceNr: Long): Source[EventEnvelope, NotUsed] =
+    toSequenceNr: Long): Source[EventEnvelope, NotUsed] =
     scaladslReadJournal.currentEventsByPersistenceId(persistenceId, fromSequenceNr, toSequenceNr).asJava
 
   /**

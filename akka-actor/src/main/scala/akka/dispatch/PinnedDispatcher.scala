@@ -20,7 +20,8 @@ class PinnedDispatcher(
   _id: String,
   _shutdownTimeout: FiniteDuration,
   _threadPoolConfig: ThreadPoolConfig)
-  extends Dispatcher(_configurator,
+  extends Dispatcher(
+    _configurator,
     _id,
     Int.MaxValue,
     Duration.Zero,

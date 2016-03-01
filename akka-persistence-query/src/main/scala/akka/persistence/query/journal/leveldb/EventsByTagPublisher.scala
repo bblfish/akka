@@ -22,7 +22,7 @@ import akka.persistence.journal.leveldb.LeveldbJournal.ReplayedTaggedMessage
  */
 private[akka] object EventsByTagPublisher {
   def props(tag: String, fromOffset: Long, toOffset: Long, refreshInterval: Option[FiniteDuration],
-            maxBufSize: Int, writeJournalPluginId: String): Props = {
+    maxBufSize: Int, writeJournalPluginId: String): Props = {
     refreshInterval match {
       case Some(interval) ⇒
         Props(new LiveEventsByTagPublisher(tag, fromOffset, toOffset, interval,

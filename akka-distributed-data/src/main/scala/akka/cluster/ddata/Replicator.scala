@@ -339,7 +339,7 @@ object Replicator {
    * for example not access `sender()` reference of an enclosing actor.
    */
   final case class Update[A <: ReplicatedData](key: Key[A], writeConsistency: WriteConsistency,
-                                               request: Option[Any])(val modify: Option[A] ⇒ A)
+    request: Option[Any])(val modify: Option[A] ⇒ A)
     extends Command[A] with NoSerializationVerificationNeeded {
 
     /**
@@ -735,7 +735,8 @@ final class Replicator(settings: ReplicatorSettings) extends Actor with ActorLog
   val selfUniqueAddress = cluster.selfUniqueAddress
 
   require(!cluster.isTerminated, "Cluster node must not be terminated")
-  require(role.forall(cluster.selfRoles.contains),
+  require(
+    role.forall(cluster.selfRoles.contains),
     s"This cluster member [${selfAddress}] doesn't have the role [$role]")
 
   //Start periodic gossip to random nodes in cluster
@@ -851,7 +852,7 @@ final class Replicator(settings: ReplicatorSettings) extends Actor with ActorLog
   def isLocalSender(): Boolean = !sender().path.address.hasGlobalScope
 
   def receiveUpdate(key: KeyR, modify: Option[ReplicatedData] ⇒ ReplicatedData,
-                    writeConsistency: WriteConsistency, req: Option[Any]): Unit = {
+    writeConsistency: WriteConsistency, req: Option[Any]): Unit = {
     val localValue = getData(key.id)
     Try {
       localValue match {
@@ -899,7 +900,8 @@ final class Replicator(settings: ReplicatorSettings) extends Actor with ActorLog
           val merged = envelope.merge(pruningCleanupTombstoned(writeEnvelope)).addSeen(selfAddress)
           setData(key, merged)
         } else {
-          log.warning("Wrong type for writing [{}], existing type [{}], got [{}]",
+          log.warning(
+            "Wrong type for writing [{}], existing type [{}], got [{}]",
             key, existing.getClass.getName, writeEnvelope.data.getClass.getName)
         }
       case None ⇒
@@ -1048,14 +1050,14 @@ final class Replicator(settings: ReplicatorSettings) extends Actor with ActorLog
     if (keys.nonEmpty) {
       if (log.isDebugEnabled)
         log.debug("Sending gossip to [{}], containing [{}]", sender().path.address, keys.mkString(", "))
-      val g = Gossip(keys.map(k ⇒ k -> getData(k).get)(collection.breakOut), sendBack = otherDifferentKeys.nonEmpty)
+      val g = Gossip(keys.map(k ⇒ k → getData(k).get)(collection.breakOut), sendBack = otherDifferentKeys.nonEmpty)
       sender() ! g
     }
     val myMissingKeys = otherKeys diff myKeys
     if (myMissingKeys.nonEmpty) {
       if (log.isDebugEnabled)
         log.debug("Sending gossip status to [{}], requesting missing [{}]", sender().path.address, myMissingKeys.mkString(", "))
-      val status = Status(myMissingKeys.map(k ⇒ k -> NotFoundDigest)(collection.breakOut), chunk, totChunks)
+      val status = Status(myMissingKeys.map(k ⇒ k → NotFoundDigest)(collection.breakOut), chunk, totChunks)
       sender() ! status
     }
   }

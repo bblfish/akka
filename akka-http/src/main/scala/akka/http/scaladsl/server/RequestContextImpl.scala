@@ -89,12 +89,13 @@ private[http] class RequestContextImpl(
     case _ ⇒ this
   }
 
-  private def copy(request: HttpRequest = request,
-                   unmatchedPath: Uri.Path = unmatchedPath,
-                   executionContext: ExecutionContextExecutor = executionContext,
-                   materializer: Materializer = materializer,
-                   log: LoggingAdapter = log,
-                   routingSettings: RoutingSettings = settings,
-                   parserSettings: ParserSettings = parserSettings) =
+  private def copy(
+    request: HttpRequest = request,
+    unmatchedPath: Uri.Path = unmatchedPath,
+    executionContext: ExecutionContextExecutor = executionContext,
+    materializer: Materializer = materializer,
+    log: LoggingAdapter = log,
+    routingSettings: RoutingSettings = settings,
+    parserSettings: ParserSettings = parserSettings) =
     new RequestContextImpl(request, unmatchedPath, executionContext, materializer, log, routingSettings, parserSettings)
 }

@@ -380,22 +380,22 @@ private[akka] final case class Buffer[T](size: Int, overflowStrategy: OverflowSt
         if (buffer.isFull) buffer.dropHead()
         buffer.enqueue(elem)
         ctx.pull()
-        case DropTail ⇒ (ctx, elem) ⇒
+      case DropTail ⇒ (ctx, elem) ⇒
         if (buffer.isFull) buffer.dropTail()
         buffer.enqueue(elem)
         ctx.pull()
-        case DropBuffer ⇒ (ctx, elem) ⇒
+      case DropBuffer ⇒ (ctx, elem) ⇒
         if (buffer.isFull) buffer.clear()
         buffer.enqueue(elem)
         ctx.pull()
-        case DropNew ⇒ (ctx, elem) ⇒
+      case DropNew ⇒ (ctx, elem) ⇒
         if (!buffer.isFull) buffer.enqueue(elem)
         ctx.pull()
-        case Backpressure ⇒ (ctx, elem) ⇒
+      case Backpressure ⇒ (ctx, elem) ⇒
         buffer.enqueue(elem)
         if (buffer.isFull) ctx.holdUpstream()
         else ctx.pull()
-        case Fail ⇒ (ctx, elem) ⇒
+      case Fail ⇒ (ctx, elem) ⇒
         if (buffer.isFull) ctx.fail(new BufferOverflowException(s"Buffer overflow (max capacity was: $size)!"))
         else {
           buffer.enqueue(elem)
@@ -665,7 +665,7 @@ private[akka] final case class MapAsync[In, Out](parallelism: Int, f: In ⇒ Fut
           val future = f(grab(in))
           val holder = new Holder[Try[Out]](NotYetThere)
           buffer.enqueue(holder)
-          future.onComplete(result ⇒ futureCB.invoke(holder -> result))(akka.dispatch.ExecutionContexts.sameThreadExecutionContext)
+          future.onComplete(result ⇒ futureCB.invoke(holder → result))(akka.dispatch.ExecutionContexts.sameThreadExecutionContext)
         } catch {
           case NonFatal(ex) ⇒
             if (decider(ex) == Supervision.Stop) failStage(ex)
@@ -760,8 +760,8 @@ private[akka] final case class MapAsyncUnordered[In, Out](parallelism: Int, f: I
  * INTERNAL API
  */
 private[akka] final case class Log[T](name: String, extract: T ⇒ Any,
-                                      logAdapter: Option[LoggingAdapter],
-                                      decider: Supervision.Decider) extends PushStage[T, T] {
+  logAdapter: Option[LoggingAdapter],
+  decider: Supervision.Decider) extends PushStage[T, T] {
 
   import Log._
 

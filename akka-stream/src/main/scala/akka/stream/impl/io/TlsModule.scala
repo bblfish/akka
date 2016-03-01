@@ -11,11 +11,11 @@ import akka.util.ByteString
  * INTERNAL API.
  */
 private[akka] final case class TlsModule(plainIn: Inlet[SslTlsOutbound], plainOut: Outlet[SslTlsInbound],
-                                         cipherIn: Inlet[ByteString], cipherOut: Outlet[ByteString],
-                                         shape: Shape, attributes: Attributes,
-                                         sslContext: SSLContext,
-                                         firstSession: NegotiateNewSession,
-                                         role: TLSRole, closing: TLSClosing, hostInfo: Option[(String, Int)]) extends Module {
+  cipherIn: Inlet[ByteString], cipherOut: Outlet[ByteString],
+  shape: Shape, attributes: Attributes,
+  sslContext: SSLContext,
+  firstSession: NegotiateNewSession,
+  role: TLSRole, closing: TLSClosing, hostInfo: Option[(String, Int)]) extends Module {
   override def subModules: Set[Module] = Set.empty
 
   override def withAttributes(att: Attributes): Module = copy(attributes = att)

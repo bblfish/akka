@@ -190,10 +190,12 @@ object StreamLayout {
     final def wire(from: OutPort, to: InPort): Module = {
       if (Debug) validate(this)
 
-      require(outPorts(from),
+      require(
+        outPorts(from),
         if (downstreams.contains(from)) s"The output port [$from] is already connected"
         else s"The output port [$from] is not part of the underlying graph.")
-      require(inPorts(to),
+      require(
+        inPorts(to),
         if (upstreams.contains(to)) s"The input port [$to] is already connected"
         else s"The input port [$to] is not part of the underlying graph.")
 
@@ -338,9 +340,10 @@ object StreamLayout {
     override def materializedValueComputation: MaterializedValueNode = Ignore
   }
 
-  final case class CopiedModule(override val shape: Shape,
-                                override val attributes: Attributes,
-                                copyOf: Module) extends Module {
+  final case class CopiedModule(
+    override val shape: Shape,
+    override val attributes: Attributes,
+    copyOf: Module) extends Module {
     override val subModules: Set[Module] = Set(copyOf)
 
     override def withAttributes(attr: Attributes): Module =

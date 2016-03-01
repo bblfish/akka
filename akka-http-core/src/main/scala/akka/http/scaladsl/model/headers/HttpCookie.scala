@@ -111,14 +111,15 @@ final case class HttpCookie(
 }
 
 object HttpCookie {
-  def fromPair(pair: HttpCookiePair,
-               expires: Option[DateTime] = None,
-               maxAge: Option[Long] = None,
-               domain: Option[String] = None,
-               path: Option[String] = None,
-               secure: Boolean = false,
-               httpOnly: Boolean = false,
-               extension: Option[String] = None): HttpCookie =
+  def fromPair(
+    pair: HttpCookiePair,
+    expires: Option[DateTime] = None,
+    maxAge: Option[Long] = None,
+    domain: Option[String] = None,
+    path: Option[String] = None,
+    secure: Boolean = false,
+    httpOnly: Boolean = false,
+    extension: Option[String] = None): HttpCookie =
     HttpCookie(pair.name, pair.value, expires, maxAge, domain, path, secure, httpOnly, extension)
 
   import akka.http.impl.model.parser.CharacterClasses._

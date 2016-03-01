@@ -78,13 +78,14 @@ private[akka] object Shard {
    * If `settings.rememberEntities` is enabled the `PersistentShard`
    * subclass is used, otherwise `Shard`.
    */
-  def props(typeName: String,
-            shardId: ShardRegion.ShardId,
-            entityProps: Props,
-            settings: ClusterShardingSettings,
-            extractEntityId: ShardRegion.ExtractEntityId,
-            extractShardId: ShardRegion.ExtractShardId,
-            handOffStopMessage: Any): Props = {
+  def props(
+    typeName: String,
+    shardId: ShardRegion.ShardId,
+    entityProps: Props,
+    settings: ClusterShardingSettings,
+    extractEntityId: ShardRegion.ExtractEntityId,
+    extractShardId: ShardRegion.ExtractShardId,
+    handOffStopMessage: Any): Props = {
     if (settings.rememberEntities)
       Props(new PersistentShard(typeName, shardId, entityProps, settings, extractEntityId, extractShardId, handOffStopMessage))
         .withDeploy(Deploy.local)

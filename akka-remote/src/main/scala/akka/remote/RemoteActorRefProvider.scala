@@ -73,9 +73,10 @@ private[akka] object RemoteActorRefProvider {
    * and handled as dead letters to the original (remote) destination. Without this special case, DeathWatch related
    * functionality breaks, like the special handling of Watch messages arriving to dead letters.
    */
-  private class RemoteDeadLetterActorRef(_provider: ActorRefProvider,
-                                         _path: ActorPath,
-                                         _eventStream: EventStream) extends DeadLetterActorRef(_provider, _path, _eventStream) {
+  private class RemoteDeadLetterActorRef(
+    _provider: ActorRefProvider,
+    _path: ActorPath,
+    _eventStream: EventStream) extends DeadLetterActorRef(_provider, _path, _eventStream) {
     import EndpointManager.Send
 
     override def !(message: Any)(implicit sender: ActorRef): Unit = message match {
@@ -162,16 +163,16 @@ private[akka] class RemoteActorRefProvider(
 
     val internals = Internals(
       remoteDaemon = {
-        val d = new RemoteSystemDaemon(
-          system,
-          local.rootPath / "remote",
-          rootGuardian,
-          remotingTerminator,
-          log,
-          untrustedMode = remoteSettings.UntrustedMode)
-        local.registerExtraNames(Map(("remote", d)))
-        d
-      },
+      val d = new RemoteSystemDaemon(
+        system,
+        local.rootPath / "remote",
+        rootGuardian,
+        remotingTerminator,
+        log,
+        untrustedMode = remoteSettings.UntrustedMode)
+      local.registerExtraNames(Map(("remote", d)))
+      d
+    },
       serialization = SerializationExtension(system),
       transport = new Remoting(system, this))
 
@@ -211,7 +212,7 @@ private[akka] class RemoteActorRefProvider(
     system.systemActorOf(remoteSettings.configureDispatcher(Props[RemoteDeploymentWatcher]), "remote-deployment-watcher")
 
   def actorOf(system: ActorSystemImpl, props: Props, supervisor: InternalActorRef, path: ActorPath,
-              systemService: Boolean, deploy: Option[Deploy], lookupDeploy: Boolean, async: Boolean): InternalActorRef =
+    systemService: Boolean, deploy: Option[Deploy], lookupDeploy: Boolean, async: Boolean): InternalActorRef =
     if (systemService) local.actorOf(system, props, supervisor, path, systemService, deploy, lookupDeploy, async)
     else {
 

@@ -24,7 +24,7 @@ import akka.stream.impl.StreamSupervisor
  * INTERNAL API
  */
 private[stream] case class GraphModule(assembly: GraphAssembly, shape: Shape, attributes: Attributes,
-                                       matValIDs: Array[Module]) extends Module {
+  matValIDs: Array[Module]) extends Module {
   override def subModules: Set[Module] = Set.empty
   override def withAttributes(newAttr: Attributes): Module = copy(attributes = newAttr)
 

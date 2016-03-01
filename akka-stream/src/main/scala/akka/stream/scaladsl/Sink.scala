@@ -305,7 +305,7 @@ object Sink {
    * function will be sent to the destination actor.
    */
   def actorRefWithAck[T](ref: ActorRef, onInitMessage: Any, ackMessage: Any, onCompleteMessage: Any,
-                         onFailureMessage: (Throwable) ⇒ Any = Status.Failure): Sink[T, NotUsed] =
+    onFailureMessage: (Throwable) ⇒ Any = Status.Failure): Sink[T, NotUsed] =
     Sink.fromGraph(new ActorRefBackpressureSinkStage(ref, onInitMessage, ackMessage, onCompleteMessage, onFailureMessage))
 
   /**

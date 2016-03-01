@@ -22,9 +22,10 @@ import scala.util.Try
 /**
  * INTERNAL API
  */
-private[akka] final case class GraphStageModule(shape: Shape,
-                                                attributes: Attributes,
-                                                stage: GraphStageWithMaterializedValue[Shape, Any]) extends Module {
+private[akka] final case class GraphStageModule(
+  shape: Shape,
+  attributes: Attributes,
+  stage: GraphStageWithMaterializedValue[Shape, Any]) extends Module {
   override def carbonCopy: Module = CopiedModule(shape.deepCopy(), Attributes.none, this)
 
   override def replaceShape(s: Shape): Module =

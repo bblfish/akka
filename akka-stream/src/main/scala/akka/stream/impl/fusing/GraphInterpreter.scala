@@ -99,12 +99,13 @@ private[akka] object GraphInterpreter {
    * corresponding segments of these arrays matches the exact same order of the ports in the [[Shape]].
    *
    */
-  final class GraphAssembly(val stages: Array[GraphStageWithMaterializedValue[Shape, Any]],
-                            val originalAttributes: Array[Attributes],
-                            val ins: Array[Inlet[_]],
-                            val inOwners: Array[Int],
-                            val outs: Array[Outlet[_]],
-                            val outOwners: Array[Int]) {
+  final class GraphAssembly(
+    val stages: Array[GraphStageWithMaterializedValue[Shape, Any]],
+    val originalAttributes: Array[Attributes],
+    val ins: Array[Inlet[_]],
+    val inOwners: Array[Int],
+    val outs: Array[Outlet[_]],
+    val outOwners: Array[Int]) {
     require(ins.length == inOwners.length && inOwners.length == outs.length && outs.length == outOwners.length)
 
     def connectionCount: Int = ins.length
@@ -119,10 +120,11 @@ private[akka] object GraphInterpreter {
      *  - array of the logics
      *  - materialized value
      */
-    def materialize(inheritedAttributes: Attributes,
-                    copiedModules: Array[Module],
-                    matVal: ju.Map[Module, Any],
-                    register: MaterializedValueSource[Any] ⇒ Unit): (Array[InHandler], Array[OutHandler], Array[GraphStageLogic]) = {
+    def materialize(
+      inheritedAttributes: Attributes,
+      copiedModules: Array[Module],
+      matVal: ju.Map[Module, Any],
+      register: MaterializedValueSource[Any] ⇒ Unit): (Array[InHandler], Array[OutHandler], Array[GraphStageLogic]) = {
       val logics = Array.ofDim[GraphStageLogic](stages.length)
 
       var i = 0
@@ -205,9 +207,10 @@ private[akka] object GraphInterpreter {
     /**
      * INTERNAL API
      */
-    final def apply(inlets: immutable.Seq[Inlet[_]],
-                    outlets: immutable.Seq[Outlet[_]],
-                    stages: GraphStageWithMaterializedValue[Shape, _]*): GraphAssembly = {
+    final def apply(
+      inlets: immutable.Seq[Inlet[_]],
+      outlets: immutable.Seq[Outlet[_]],
+      stages: GraphStageWithMaterializedValue[Shape, _]*): GraphAssembly = {
       // add the contents of an iterator to an array starting at idx
       @tailrec def add[T](i: Iterator[T], a: Array[T], idx: Int): Array[T] =
         if (i.hasNext) {

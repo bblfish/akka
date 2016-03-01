@@ -42,7 +42,8 @@ final case class AtomicWrite(payload: immutable.Seq[PersistentRepr]) extends Per
     case l: List[PersistentRepr]   ⇒ l.tail.nonEmpty // avoids calling .size
     case v: Vector[PersistentRepr] ⇒ v.size > 1
     case _                         ⇒ true // some other collection type, let's just check
-  }) require(payload.forall(_.persistenceId == payload.head.persistenceId),
+  }) require(
+    payload.forall(_.persistenceId == payload.head.persistenceId),
     "AtomicWrite must contain messages for the same persistenceId, " +
       s"yet different persistenceIds found: ${payload.map(_.persistenceId).toSet}")
 

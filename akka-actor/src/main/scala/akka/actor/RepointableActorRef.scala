@@ -171,10 +171,11 @@ private[akka] class RepointableActorRef(
   protected def writeReplace(): AnyRef = SerializedActorRef(this)
 }
 
-private[akka] class UnstartedCell(val systemImpl: ActorSystemImpl,
-                                  val self: RepointableActorRef,
-                                  val props: Props,
-                                  val supervisor: InternalActorRef) extends Cell {
+private[akka] class UnstartedCell(
+  val systemImpl: ActorSystemImpl,
+  val self: RepointableActorRef,
+  val props: Props,
+  val supervisor: InternalActorRef) extends Cell {
 
   /*
    * This lock protects all accesses to this cell’s queues. It also ensures
